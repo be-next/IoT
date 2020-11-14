@@ -1,9 +1,19 @@
 //
 // Temperature sensor : TMP36
-// LCD display : HD44780
 //
-// Displayed temperature is an average from twenty values rolling window, 
-// based on one measure every 2 seconds.
+// LCD display : compatible with the Hitachi HD44780 driver / 16-pin interface
+// LCD RS pin to digital pin 12
+// LCD Enable pin to digital pin 11
+// LCD D4 pin to digital pin 5
+// LCD D5 pin to digital pin 4
+// LCD D6 pin to digital pin 3
+// LCD D7 pin to digital pin 2
+// LCD R/W pin to ground
+// LCD VSS pin to ground
+// LCD VCC pin to 5V
+//
+// Average temperature from twenty rolling values 
+// based on one measurement every 2 seconds.
 //
 
 #include <Streaming.h>
@@ -15,6 +25,7 @@ const int sensorPin = A0;
 const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
 float temp_tab[TAB_SIZE];
 int a = 0;
+// initialize the library with the numbers of the interface pins
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 void setup() {
@@ -42,8 +53,10 @@ void loop() {
 
 void printTemp( void ) {
   updateTemp();
-
+  // set the cursor to column 0, line 1
+  // (note: line 1 is the second row, since counting begins with 0):
   lcd.setCursor(0, 1);
+  // print temperature
   lcd << getTempAverage();
 }
 
@@ -66,7 +79,7 @@ float getTempFromSensor( void ) {
 }
 
 float getTempAverage( void ) {
-  float rez = 0;
+  float rez = 0.0;
   
   for(int i = 0; i < TAB_SIZE; i++) {
     rez += temp_tab[i];
